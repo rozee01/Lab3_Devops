@@ -12,20 +12,20 @@ pipeline {
         }
         stage('Construire l\'image Docker') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
+                bat 'docker build -t %DOCKER_IMAGE% .'
             }
         }
         stage('Pousser l\'image Docker') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                    sh 'docker push $DOCKER_IMAGE'
+                    bat 'echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin'
+                    bat 'docker push %DOCKER_IMAGE%'
                 }
             }
         }
         stage('Déployer avec Helm') {
             steps {
-                sh 'helm upgrade --install mon-app $HELM_CHART_PATH'
+                bat 'helm upgrade --install mon-app %HELM_CHART_PATH%'
             }
         }
     }
